@@ -2,9 +2,8 @@ const request = require('request-promise');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
 const urlParse = require('url').parse;
-
-const { dbConnectionString } = require('./constants');
 const CrawledUrlModel = require('./model/crawledUrl.model');
+const { dbConnectionString } = require('./constants');
 
 mongoose.connect(dbConnectionString, { useNewUrlParser: true }, (err) => {
     if (err) console.log(err);
@@ -25,14 +24,13 @@ async function updateUrlDetails(url) {
     await CrawledUrlModel.updateOne(query, updateObj, { upsert: true });
 }
 
-const increaseConcurrencyCount = () => concurrency++;
-const decreaseConcurrencyCount = () => concurrency--;
+const increaseConcurrencyCount = () => { concurrency++; logConcurrency(); }
+const decreaseConcurrencyCount = () => { concurrency--; logConcurrency(); }
 const logConcurrency = () => console.log("url processing count", concurrency, Date.now());
 
 async function crawl(visitingUrl) {
     try {
         increaseConcurrencyCount();
-        logConcurrency();
         visitedUrls.add(visitingUrl);
         unvisitedUrls.delete(visitingUrl);
         const response = await request.get(visitingUrl);
@@ -54,13 +52,13 @@ async function crawl(visitingUrl) {
             await updateUrlDetails(actualUrl);
         }
         decreaseConcurrencyCount();
-        logConcurrency();
         for (let url of unvisitedUrls) {
             if (concurrency === 5) break;
             crawl(url);
         }
     }
     catch (err) {
+        // fallback if some url fails
         console.log('error for url', visitingUrl);
         decreaseConcurrencyCount();
         for (let url of unvisitedUrls) {
