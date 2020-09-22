@@ -29,6 +29,13 @@ const increaseConcurrencyCount = () => { concurrency++; logConcurrency(); }
 const decreaseConcurrencyCount = () => { concurrency--; logConcurrency(); }
 const logConcurrency = () => console.log("url processing count", concurrency, Date.now());
 
+function crawlUnvisitedUrls(urls) {
+    for (let url of urls) {
+        if (concurrency === MAX_CONCURRENT) break;
+        crawl(url);
+    }
+}
+
 async function crawl(visitingUrl) {
     try {
         increaseConcurrencyCount();
@@ -53,19 +60,13 @@ async function crawl(visitingUrl) {
             await updateUrlDetails(actualUrl);
         }
         decreaseConcurrencyCount();
-        for (let url of unvisitedUrls) {
-            if (concurrency === MAX_CONCURRENT) break;
-            crawl(url);
-        }
+        crawlUnvisitedUrls(unvisitedUrls);
     }
     catch (err) {
         // fallback if some url fails
         console.log('error for url', visitingUrl);
         decreaseConcurrencyCount();
-        for (let url of unvisitedUrls) {
-            if (concurrency === MAX_CONCURRENT) break;
-            crawl(url);
-        }
+        crawlUnvisitedUrls(unvisitedUrls);
     }
 }
 
