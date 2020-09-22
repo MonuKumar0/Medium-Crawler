@@ -6,5 +6,5 @@
 ### How do I get set up? ###
 
 * install dependencies - npm i
-* in constant.js, just fill up the vacant "dbConnectionString" for storing drivers location
+* in constant.js, just fill up the vacant "dbConnectionString" for storing url details
 * run command 'node crawler.js'
