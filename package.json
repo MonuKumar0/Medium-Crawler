@@ -2,7 +2,7 @@
   "name": "crawler",
   "version": "1.0.0",
   "description": "crawling medium.com",
-  "main": "app.js",
+  "main": "crawler.js",
   "scripts": {
     "test": "node crawler.js"
   },
