@@ -4,7 +4,7 @@
   "description": "crawling medium.com",
   "main": "app.js",
   "scripts": {
-    "test": "node app.js"
+    "test": "node crawler.js"
   },
   "author": "Monu Kumar",
   "license": "ISC",
