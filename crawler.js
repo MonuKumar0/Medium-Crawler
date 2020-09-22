@@ -16,6 +16,7 @@ const baseUrl = "https://medium.com";
 const unvisitedUrls = new Set();
 const visitedUrls = new Set();
 let concurrency = 0;
+const MAX_CONCURRENT = 5;
 
 async function updateUrlDetails(url) {
     const parsedUrl = urlParse(url, true);
@@ -53,7 +54,7 @@ async function crawl(visitingUrl) {
         }
         decreaseConcurrencyCount();
         for (let url of unvisitedUrls) {
-            if (concurrency === 5) break;
+            if (concurrency === MAX_CONCURRENT) break;
             crawl(url);
         }
     }
@@ -62,7 +63,7 @@ async function crawl(visitingUrl) {
         console.log('error for url', visitingUrl);
         decreaseConcurrencyCount();
         for (let url of unvisitedUrls) {
-            if (concurrency === 5) break;
+            if (concurrency === MAX_CONCURRENT) break;
             crawl(url);
         }
     }
